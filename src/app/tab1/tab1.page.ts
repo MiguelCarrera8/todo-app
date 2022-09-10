@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ZBar, ZBarOptions } from '@ionic-native/zbar/ngx';
+import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
 
 @Component({
   selector: 'app-tab1',
@@ -8,27 +8,35 @@ import { ZBar, ZBarOptions } from '@ionic-native/zbar/ngx';
 })
 export class Tab1Page {
 
-  zbarOptions: any;
-  scannedResult: any;
-
   constructor(
-    private zbar: ZBar,
-  ) {
-    this.zbarOptions = {
-      flash: 'off',
-      drawSight: false
-    }
-  }
+    private qrScanner: QRScanner
+  ) { }
 
   scanCode() {
-    this.zbar.scan(this.zbarOptions)
-      .then(result => {
-        console.log(result); // Scanned code
-        this.scannedResult = result;
+    this.qrScanner.prepare()
+      .then((status: QRScannerStatus) => {
+        if (status.authorized) {
+          // camera permission was granted
+
+
+          // start scanning
+          let scanSub = this.qrScanner.scan().subscribe((text: string) => {
+            console.log('Scanned something', text);
+
+            this.qrScanner.hide(); // hide camera preview
+            scanSub.unsubscribe(); // stop scanning
+          });
+
+        } else if (status.denied) {
+          // camera permission was permanently denied
+          // you must use QRScanner.openSettings() method to guide the user to the settings page
+          // then they can grant the permission from there
+        } else {
+          // permission was denied, but not permanently. You can ask for permission again at a later time.
+        }
       })
-      .catch(error => {
-        alert(error); // Error message
-      });
+      .catch((e: any) => console.log('Error is', e));
+
   }
 
 }
