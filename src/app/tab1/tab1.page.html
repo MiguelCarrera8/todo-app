@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Escanear QR
+      Tareas
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,11 +9,35 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Escanear QR</ion-title>
+      <ion-title size="large">Tareas</ion-title>
     </ion-toolbar>
   </ion-header>
 
+  <div class="container">
+    <ion-item lines="none">
+      <ion-textarea [(ngModel)]="tarea" placeholder="Introduce una tarea"></ion-textarea>
+    </ion-item>
+    <ion-button (click)="scanCode()"><ion-icon name="checkmark-circle-outline"></ion-icon></ion-button>
+  </div>
 
-  <ion-button (click)="scanCode()">Scan Code</ion-button>
+  <div class="container2">
+    <div class="tarea" *ngFor="let tarea of tareas; let index = index">
+      <ion-checkbox mode="ios" (click)="marcar(index, $event.target.checked)" [checked]="tarea.checked"></ion-checkbox>
+      <span>{{tarea.content}}</span>
+      <ion-icon (click)="delete(index, 1)" src=".././../assets/icon/delete.svg"></ion-icon>
+
+    </div>
+  </div>
+
+  <p *ngIf="tareas_marcadas.length != 0">Marcadas</p>
+
+  <div class="container2">
+    <div class="tarea" *ngFor="let tarea of tareas_marcadas; let index = index">
+      <ion-checkbox mode="ios" (click)="desmarcar(index, $event.target.checked)"
+        [checked]="tarea.checked"></ion-checkbox>
+      <span>{{tarea.content}}</span>
+      <ion-icon (click)="delete(index, 2)" src=".././../assets/icon/delete.svg"></ion-icon>
+    </div>
+  </div>
 
 </ion-content>
